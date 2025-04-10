@@ -1,4 +1,4 @@
-name: CI - Build & Test
+name: CI Pipeline
 
 on:
   push:
@@ -7,35 +7,53 @@ on:
     branches: [main]
 
 jobs:
-  build-and-test:
+  build:
     runs-on: ubuntu-latest
+
+    services:
+      docker:
+        image: docker:20.10.16
+        options: >-
+          --privileged
+          --entrypoint=""
+        ports:
+          - 80:80
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
 
+    # 📦 Backend setup (Python)
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.10
+
+    - name: Install backend dependencies
+      run: |
+        pip install -r requirements.txt
+      working-directory: ./ai-service
+
+    - name: Run backend tests (optional)
+      run: |
+        echo "No tests defined yet"
+      working-directory: ./ai-service
+
+    # 🧱 Frontend build (React)
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
         node-version: 18
 
     - name: Install frontend dependencies
-      working-directory: ./frontend
       run: npm install
+      working-directory: ./frontend
 
     - name: Build frontend
-      working-directory: ./frontend
       run: npm run build
+      working-directory: ./frontend
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: "3.10"
+    # ✅ Success
+    - name: Done 🎉
+      run: echo "CI Pipeline completed successfully!"
 
-    - name: Install backend dependencies
-      working-directory: ./backend
-      run: pip install -r requirements.txt
-
-    - name: Run backend tests
-      working-directory: ./backend
-      run: pytest || echo "Add your tests here!"

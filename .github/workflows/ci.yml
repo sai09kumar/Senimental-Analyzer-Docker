@@ -10,15 +10,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    services:
-      docker:
-        image: docker:20.10.16
-        options: >-
-          --privileged
-          --entrypoint=""
-        ports:
-          - 80:80
-
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
@@ -36,10 +27,10 @@ jobs:
 
     - name: Run backend tests (optional)
       run: |
-        echo "No tests defined yet"
+        echo "No backend tests yet"
       working-directory: ./ai-service
 
-    # 🧱 Frontend build (React)
+    # 🧱 Frontend setup (React)
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
@@ -53,7 +44,5 @@ jobs:
       run: npm run build
       working-directory: ./frontend
 
-    # ✅ Success
     - name: Done 🎉
-      run: echo "CI Pipeline completed successfully!"
-
+      run: echo "Build & Test complete"
